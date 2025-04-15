@@ -1,15 +1,18 @@
+import EventEmitter from "./EventEmitter.js";
 import Focusable from "./Focusable.js";
 
 /**
  * Manages switching between mouse and keyboard input modes and
  * handles navigation between focusable elements.
  */
-class InputManager {
+class InputManager extends EventEmitter {
   /**
    * @param {Object} cursor - A custom cursor instance with setTargetPosition(), getPosition(), and runAnimation().
    * @param {Array<Focusable>} focusables - List of focusable element instances.
    */
   constructor(cursor, focusables) {
+    super();
+
     /** @type {'mouse' | 'keyboard'} */
     this.mode = "mouse";
 
@@ -43,7 +46,10 @@ class InputManager {
   initListeners() {
     this.cursor.on("move", (e) => this.handleMouse(e));
 
-    document.addEventListener("keydown", (e) => this.handleInput(e));
+    document.addEventListener("keydown", (e) => {
+      this.handleInput(e);
+      this.emit("input", { key: e.key });
+    });
   }
 
   handleInput(event) {

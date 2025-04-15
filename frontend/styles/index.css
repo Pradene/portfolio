@@ -21,11 +21,21 @@ body {
     overflow: hidden;
 }
 
+nav {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+    justify-content: space-around;
+    cursor: none;
+    overflow: hidden;
+}
+
 .focusable {
     width: 2rem;
     height: 2rem;
     border-radius: 0.5rem;
     border: solid 1px black;
+    transition: border 0.5s ease-out;
 }
 
 .focused {

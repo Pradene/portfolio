@@ -108,9 +108,9 @@ class Cursor extends EventEmitter {
       const x = elementPosition.x + elementSize.width / 2 - currentPosition.x;
       const y = elementPosition.y + elementSize.height / 2 - currentPosition.y;
 
-      this.element.children[0].style.transform = `translate3d(${x}px, ${y}px, 0)`;
+      this.element.children[0].style.transform = `translate3d(${x}px, ${y}px, 0) scale(0.5)`;
     } else {
-      this.element.children[0].style.transform = `translate3d(0, 0, 0)`;
+      this.element.children[0].style.transform = `translate3d(0, 0, 0) scale(1)`;
     }
   }
 
