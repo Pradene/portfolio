@@ -41,65 +41,69 @@ class InputManager {
    * Sets up mouse and keyboard event listeners.
    */
   initListeners() {
-    this.cursor.on("move", (e) => {
-      this.setMode("mouse");
+    this.cursor.on("move", (e) => this.handleMouse(e));
 
-      // Always track the actual mouse position
-      this.actualMousePosition = { x: e.clientX, y: e.clientY };
+    document.addEventListener("keydown", (e) => this.handleInput(e));
+  }
 
-      // Check if we need to completely exit focus due to large movement
-      if (this.focusedElement) {
-        const focusedPos = this.focusedElement.getPosition();
-        const distFromFocused = Math.hypot(
-          e.clientX - focusedPos.x,
-          e.clientY - focusedPos.y
-        );
+  handleInput(event) {
+    if (["ArrowRight", "ArrowLeft", "Tab"].includes(event.key)) {
+      this.setMode("keyboard");
+      this.navigate(event.key);
+    } else if (event.key === "Escape") {
+      // Allow escape key to clear focus
+      this.clearFocus();
+      this.cursor.setTargetPosition(
+        this.actualMousePosition.x,
+        this.actualMousePosition.y
+      );
+    }
+  }
 
-        // If mouse is very far from focused element, clear focus
-        if (distFromFocused > this.UNSNAP_DISTANCE) {
-          this.clearFocus();
-          this.cursor.setTargetPosition(e.clientX, e.clientY);
-          return;
-        }
+  handleMouse(event) {
+    this.setMode("mouse");
+
+    // Always track the actual mouse position
+    this.actualMousePosition = { x: event.clientX, y: event.clientY };
+
+    // Check if we need to completely exit focus due to large movement
+    if (this.focusedElement) {
+      const focusedPos = this.focusedElement.getPosition();
+      const distFromFocused = Math.hypot(
+        event.clientX - focusedPos.x,
+        event.clientY - focusedPos.y
+      );
+
+      // If mouse is very far from focused element, clear focus
+      if (distFromFocused > this.UNSNAP_DISTANCE) {
+        this.clearFocus();
+        this.cursor.setTargetPosition(event.clientX, event.clientY);
+        return;
       }
+    }
 
-      const nearest = this.getNearestFocusable(e.clientX, e.clientY);
+    const nearest = this.getNearestFocusable(event.clientX, event.clientY);
 
-      if (nearest) {
-        const dist = this.distanceTo(nearest);
+    if (nearest) {
+      const dist = this.distanceTo(nearest);
 
-        if (dist < this.SNAP_DISTANCE) {
-          // Get the focused element
-          const newFocusedElement = this.getFocusableAtPosition(nearest);
+      if (dist < this.SNAP_DISTANCE) {
+        // Get the focused element
+        const newFocusedElement = this.getFocusableAtPosition(nearest);
 
-          // If we found a new focusable, set it as focused
-          if (newFocusedElement && newFocusedElement !== this.focusedElement) {
-            this.cursor.setTargetPosition(e.clientX, e.clientY);
-            this.setFocusedElement(newFocusedElement);
-          }
-        } else if (!this.focusedElement) {
-          // Only follow mouse if we don't have focus
-          this.cursor.setTargetPosition(e.clientX, e.clientY);
+        // If we found a new focusable, set it as focused
+        if (newFocusedElement && newFocusedElement !== this.focusedElement) {
+          this.cursor.setTargetPosition(event.clientX, event.clientY);
+          this.setFocusedElement(newFocusedElement);
         }
       } else if (!this.focusedElement) {
-        // No focusable nearby and no focus, just follow the mouse
-        this.cursor.setTargetPosition(e.clientX, e.clientY);
+        // Only follow mouse if we don't have focus
+        this.cursor.setTargetPosition(event.clientX, event.clientY);
       }
-    });
-
-    document.addEventListener("keydown", (e) => {
-      if (["ArrowRight", "ArrowLeft", "Tab"].includes(e.key)) {
-        this.setMode("keyboard");
-        this.navigate(e.key);
-      } else if (e.key === "Escape") {
-        // Allow escape key to clear focus
-        this.clearFocus();
-        this.cursor.setTargetPosition(
-          this.actualMousePosition.x,
-          this.actualMousePosition.y
-        );
-      }
-    });
+    } else if (!this.focusedElement) {
+      // No focusable nearby and no focus, just follow the mouse
+      this.cursor.setTargetPosition(event.clientX, event.clientY);
+    }
   }
 
   /**

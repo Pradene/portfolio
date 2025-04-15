@@ -36,6 +36,16 @@ class Focusable {
   }
 
   /**
+   * Set position
+   */
+  setPosition() {
+    const rect = this.element.getBoundingClientRect();
+    const x = lerp(rect.right, rect.left, 0.5);
+    const y = lerp(rect.top, rect.bottom, 0.5);
+    this.position.setPosition(x, y);
+  }
+
+  /**
    * Get size
    * @returns {number, number} Size (width, height)
    */

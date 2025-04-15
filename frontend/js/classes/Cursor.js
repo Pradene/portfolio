@@ -36,13 +36,13 @@ class Cursor extends EventEmitter {
   initMouseEvents() {
     document.addEventListener("mouseleave", (e) => {
       this.hide();
-      this.emit("leave", { x: e.clientX, y: e.clientY });
+      this.emit("leave", { clientX: e.clientX, clientY: e.clientY });
     });
 
     // Handle mouse entering the window
     document.addEventListener("mouseenter", (e) => {
       this.show();
-      this.emit("enter", { x: e.clientX, y: e.clientY });
+      this.emit("enter", { clientX: e.clientX, clientY: e.clientY });
     });
 
     // Handle mouse movement
@@ -58,6 +58,15 @@ class Cursor extends EventEmitter {
 
   /**
    * Moves the cursor element to the specified position.
+   * @param {number} x - The x (left) coordinate in pixels.
+   * @param {number} y - The y (top) coordinate in pixels.
+   */
+  setPosition(x, y) {
+    this.position.setPosition(x, y);
+  }
+
+  /**
+   * Moves the target cursor element to the specified position.
    * @param {number} x - The x (left) coordinate in pixels.
    * @param {number} y - The y (top) coordinate in pixels.
    */

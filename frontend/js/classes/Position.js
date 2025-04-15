@@ -26,6 +26,15 @@ class Position {
    * @param {number} x - Target x (left) position.
    * @param {number} y - Target y (top) position.
    */
+  setPosition(x, y) {
+    this.currentPos = { x, y };
+  }
+
+  /**
+   * Sets the target position for the element to smoothly move towards.
+   * @param {number} x - Target x (left) position.
+   * @param {number} y - Target y (top) position.
+   */
   setTargetPosition(x, y) {
     this.targetPos = { x, y };
   }

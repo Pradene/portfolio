@@ -15,6 +15,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const inputManager = new InputManager(cursor, focusableInstances);
 
+  window.addEventListener("resize", (event) => {
+    // Update all focusable positions
+    focusableInstances.forEach((focusable) => {
+      focusable.setPosition();
+    });
+  });
+
   const animate = () => {
     cursor.update();
     requestAnimationFrame(animate);
