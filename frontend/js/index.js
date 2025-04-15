@@ -1,32 +1,32 @@
-import Cursor from "./classes/Cursor.js"
-import Focusable from "./classes/Focusable.js"
-import InputManager from "./classes/InputManager.js"
+import Cursor from "./classes/Cursor.js";
+import Focusable from "./classes/Focusable.js";
+import InputManager from "./classes/InputManager.js";
 
 document.addEventListener("DOMContentLoaded", () => {
-  const cursorElement = document.getElementById('cursor')
-  const cursor = new Cursor(cursorElement)
+  const cursorElement = document.getElementById("cursor");
+  const cursor = new Cursor(cursorElement);
 
   document.addEventListener("mouseleave", (e) => {
-    cursor.hide()
-  })
+    cursor.hide();
+  });
 
   document.addEventListener("mouseenter", (e) => {
-    cursor.show()
-  })
+    cursor.show();
+  });
 
-  const focusables = document.querySelectorAll(".focusable")
-  const focusableInstances = []
+  const focusables = document.querySelectorAll(".focusable");
+  const focusableInstances = [];
   focusables.forEach((focusable) => {
-    const instance = new Focusable(focusable)
-    focusableInstances.push(instance)
-  })
+    const instance = new Focusable(focusable);
+    focusableInstances.push(instance);
+  });
 
-  const inputManager = new InputManager(cursor, focusableInstances)
-  
+  const inputManager = new InputManager(cursor, focusableInstances);
+
   const animate = () => {
-    cursor.update()
-    requestAnimationFrame(animate)
-  }
+    cursor.update();
+    requestAnimationFrame(animate);
+  };
 
-  animate()
-})
+  animate();
+});
