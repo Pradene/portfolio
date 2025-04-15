@@ -15,12 +15,15 @@ class Focusable {
     }
 
     /** @private */
+    /** @type {HTMLElement} */
     this.element = element;
     const rect = this.element.getBoundingClientRect();
 
     const x = lerp(rect.right, rect.left, 0.5);
     const y = lerp(rect.top, rect.bottom, 0.5);
 
+    /** @private */
+    /** @type {Position} */
     this.position = new Position({ x, y });
   }
 

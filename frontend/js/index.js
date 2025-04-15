@@ -6,14 +6,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const cursorElement = document.getElementById("cursor");
   const cursor = new Cursor(cursorElement);
 
-  document.addEventListener("mouseleave", (e) => {
-    cursor.hide();
-  });
-
-  document.addEventListener("mouseenter", (e) => {
-    cursor.show();
-  });
-
   const focusables = document.querySelectorAll(".focusable");
   const focusableInstances = [];
   focusables.forEach((focusable) => {

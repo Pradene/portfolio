@@ -41,7 +41,7 @@ class InputManager {
    * Sets up mouse and keyboard event listeners.
    */
   initListeners() {
-    document.addEventListener("mousemove", (e) => {
+    this.cursor.on("move", (e) => {
       this.setMode("mouse");
 
       // Always track the actual mouse position

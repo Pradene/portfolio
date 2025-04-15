@@ -1,15 +1,18 @@
+import EventEmitter from "./EventEmitter.js";
 import Focusable from "./Focusable.js";
 import Position from "./Position.js";
 
 /**
  * A class to manage and update a custom cursor element.
  */
-class Cursor {
+class Cursor extends EventEmitter {
   /**
    * Creates a new Cursor instance.
    * @param {HTMLElement} element - The HTML element to control (e.g., a div acting as a custom cursor).
    */
   constructor(element) {
+    super();
+
     if (!(element instanceof HTMLElement)) {
       throw new Error("Cursor requires a valid HTMLElement.");
     }
@@ -27,6 +30,30 @@ class Cursor {
     this.focusedElement = null;
 
     this.hide();
+    this.initMouseEvents();
+  }
+
+  initMouseEvents() {
+    document.addEventListener("mouseleave", (e) => {
+      this.hide();
+      this.emit("leave", { x: e.clientX, y: e.clientY });
+    });
+
+    // Handle mouse entering the window
+    document.addEventListener("mouseenter", (e) => {
+      this.show();
+      this.emit("enter", { x: e.clientX, y: e.clientY });
+    });
+
+    // Handle mouse movement
+    document.addEventListener("mousemove", (e) => {
+      // Emit move event with position data
+      this.emit("move", {
+        clientX: e.clientX,
+        clientY: e.clientY,
+        timestamp: Date.now(),
+      });
+    });
   }
 
   /**
