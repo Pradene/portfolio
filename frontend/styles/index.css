@@ -1,0 +1,33 @@
+@import "./cursor.css";
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    height: 100%;
+    width: 100%;
+}
+
+body {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    cursor: none;
+    overflow: hidden;
+}
+
+.focusable {
+    width: 2rem;
+    height: 2rem;
+    border-radius: 0.5rem;
+    border: solid 1px black;
+}
+
+.focused {
+    border: solid 1px rgb(230, 77, 7);
+}
