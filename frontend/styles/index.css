@@ -21,6 +21,9 @@ body {
     justify-content: space-around;
     cursor: none;
     overflow: hidden;
+    font-family: "Bytesized", sans-serif;
+    font-weight: 400;
+    font-style: normal;
 }
 
 nav {
@@ -29,5 +32,6 @@ nav {
     align-items: center;
     justify-content: space-around;
     cursor: none;
-    overflow: hidden;
+    padding: 1rem;
+    border-radius: 0.5rem;
 }

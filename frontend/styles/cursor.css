@@ -1,19 +1,28 @@
 #cursor {
-    position: absolute;
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 50%;
+    position: fixed; /* Changed to fixed for better tracking */
+    display: flex;
+    align-items: center;
+    justify-content: center;
     pointer-events: none;
     left: 0;
     top: 0;
+    background-color: rgb(255, 230, 25);
     transform: translate(-50%, -50%); /* Center on mouse */
-    z-index: 10000;
+    z-index: 1001;
 }
 
 .inner-cursor {
+    position: absolute;
+    z-index: 1000;
     width: 1rem;
     height: 1rem;
     border-radius: 50%;
-    background-color: black;
+    background-color: rgba(0, 0, 255, 0.5); /* Fixed rgba format */
     opacity: 0;
-    transform: scale(0); /* Initial scale (hidden) */
+    transform: translate3d(0, 0, 0) scale(0); /* Initial scale (hidden) */
     transition: transform 0.25s ease-out, opacity 0.25s ease-out;
 }
 

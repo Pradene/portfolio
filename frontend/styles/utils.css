@@ -1,11 +1,44 @@
 .focusable {
+    position: relative;
     width: 2rem;
     height: 2rem;
     border-radius: 0.5rem;
     border: solid 1px black;
-    transition: border 0.5s ease-out;
+    overflow: visible; /* Allow children to overflow */
+}
+
+.focusable::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 0.75rem;
+    height: 0.75rem;
+    background-color: white; /* Same as your background */
+    transform: translate(40%, 40%) rotate(45deg);
+    z-index: 1;
 }
 
 .focused {
     border: solid 1px rgb(230, 77, 7);
+}
+
+.fzf-id {
+    position: absolute;
+    pointer-events: none;
+    width: 1rem;
+    height: 1rem;
+    font-size: 1rem;
+    color: rgb(230, 52, 7);
+    bottom: -0.56rem;
+    right: -0.62rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+    z-index: 10000; /* Very high z-index */
+    pointer-events: none;
+    -webkit-user-select: none; /* Safari */
+    -ms-user-select: none; /* IE 10 and IE 11 */
+    user-select: none;
 }

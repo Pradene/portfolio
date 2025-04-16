@@ -89,6 +89,7 @@ class InputManager extends EventEmitter {
     }
 
     const nearest = this.getNearestFocusable(event.clientX, event.clientY);
+    this.cursor.setTargetPosition(event.clientX, event.clientY);
 
     if (nearest) {
       const dist = this.distanceTo(nearest);
@@ -99,16 +100,9 @@ class InputManager extends EventEmitter {
 
         // If we found a new focusable, set it as focused
         if (newFocusedElement && newFocusedElement !== this.focusedElement) {
-          this.cursor.setTargetPosition(event.clientX, event.clientY);
           this.setFocusedElement(newFocusedElement);
         }
-      } else if (!this.focusedElement) {
-        // Only follow mouse if we don't have focus
-        this.cursor.setTargetPosition(event.clientX, event.clientY);
-      }
-    } else if (!this.focusedElement) {
-      // No focusable nearby and no focus, just follow the mouse
-      this.cursor.setTargetPosition(event.clientX, event.clientY);
+      } 
     }
   }
 
