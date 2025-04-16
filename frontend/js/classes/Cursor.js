@@ -1,6 +1,7 @@
 import EventEmitter from "./EventEmitter.js";
 import Focusable from "./Focusable.js";
 import Position from "./Position.js";
+import { lerp } from "../utils.js";
 
 /**
  * A class to manage and update a custom cursor element.
@@ -11,11 +12,11 @@ class Cursor extends EventEmitter {
    * @param {HTMLElement} element - The HTML element to control (e.g., a div acting as a custom cursor).
    */
   constructor(element) {
-    super();
-
     if (!(element instanceof HTMLElement)) {
       throw new Error("Cursor requires a valid HTMLElement.");
     }
+
+    super();
 
     /** @private */
     /** @type {HTMLElement} */
@@ -23,7 +24,11 @@ class Cursor extends EventEmitter {
 
     /**@private */
     /** @type {Position} */
-    this.position = new Position({ x: 0, y: 0 });
+    this.position = new Position(0, 0);
+
+    /**@private */
+    /** @type {Position} */
+    this.targetPosition = new Position(0, 0);
 
     /** @private */
     /** @type {Focusable|null} */
@@ -57,12 +62,20 @@ class Cursor extends EventEmitter {
   }
 
   /**
+   * Get the position of the cursor
+   * @returns {number, number} Position (x, y)
+   */
+  getPosition() {
+    return { ...this.position.get() };
+  }
+
+  /**
    * Moves the cursor element to the specified position.
    * @param {number} x - The x (left) coordinate in pixels.
    * @param {number} y - The y (top) coordinate in pixels.
    */
   setPosition(x, y) {
-    this.position.setPosition(x, y);
+    this.position.set(x, y);
   }
 
   /**
@@ -71,7 +84,14 @@ class Cursor extends EventEmitter {
    * @param {number} y - The y (top) coordinate in pixels.
    */
   setTargetPosition(x, y) {
-    this.position.setTargetPosition(x, y);
+    this.targetPosition.set(x, y);
+  }
+
+  updatePosition() {
+    const easeFactor = 0.2;
+    this.position.x = lerp(this.position.x, this.targetPosition.x, easeFactor);
+    this.position.y = lerp(this.position.y, this.targetPosition.y, easeFactor);
+    return { ...this.position }; // Return current position after update
   }
 
   /**
@@ -96,7 +116,7 @@ class Cursor extends EventEmitter {
    * Move cursor using lerp
    */
   update() {
-    const position = this.position.update();
+    const position = this.updatePosition();
     this.element.style.left = `${position.x}px`;
     this.element.style.top = `${position.y}px`;
 
@@ -123,14 +143,6 @@ class Cursor extends EventEmitter {
 
   clearFocusedElement() {
     this.focusedElement = null;
-  }
-
-  /**
-   * Get the position of the cursor
-   * @returns {number, number} Position (x, y)
-   */
-  getPosition() {
-    return { ...this.position.getPosition() };
   }
 }
 
