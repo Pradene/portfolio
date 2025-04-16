@@ -18,7 +18,7 @@ document.addEventListener("DOMContentLoaded", () => {
   window.addEventListener("resize", (event) => {
     // Update all focusable positions
     focusableInstances.forEach((focusable) => {
-      focusable.setPosition();
+      focusable.update();
     });
   });
 

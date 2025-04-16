@@ -17,14 +17,7 @@ class Focusable {
     /** @private */
     /** @type {HTMLElement} */
     this.element = element;
-    const rect = this.element.getBoundingClientRect();
-
-    const x = lerp(rect.right, rect.left, 0.5);
-    const y = lerp(rect.top, rect.bottom, 0.5);
-
-    /** @private */
-    /** @type {Position} */
-    this.position = new Position(x, y);
+    this.position = this.getPosition();
   }
 
   /**
@@ -32,17 +25,18 @@ class Focusable {
    * @returns {number, number} Position (x, y)
    */
   getPosition() {
-    return { ...this.position.get() };
-  }
-
-  /**
-   * Set position
-   */
-  setPosition() {
     const rect = this.element.getBoundingClientRect();
     const x = lerp(rect.right, rect.left, 0.5);
     const y = lerp(rect.top, rect.bottom, 0.5);
-    this.position.set(x, y);
+    return { x, y };
+  }
+
+  updatePosition() {
+    this.position = this.getPosition();
+  }
+
+  update() {
+    this.updatePosition();
   }
 
   /**
