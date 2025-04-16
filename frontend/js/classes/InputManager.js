@@ -41,7 +41,8 @@ class InputManager extends EventEmitter {
    * Sets up mouse and keyboard event listeners.
    */
   initListeners() {
-    this.cursor.on("move", () => this.handleMouse());
+    this.cursor.on("mousemove", () => this.setMode("mouse"));
+    this.cursor.on("cursormove", () => this.handleCursorMove());
 
     document.addEventListener("keydown", (e) => {
       this.handleInput(e);
@@ -59,17 +60,21 @@ class InputManager extends EventEmitter {
     }
   }
 
-  handleMouse() {
-    this.setMode("mouse");
-
+  handleCursorMove() {
     const position = this.cursor.getPosition();
 
     // Check if we need to completely exit focus due to large movement
     if (this.focusedElement) {
       const focusedPosition = this.focusedElement.getPosition();
+      const focusedSize = this.focusedElement.getSize();
+
+      // Calculate the center of the focused element
+      const centerX = focusedPosition.x + focusedSize.width / 2;
+      const centerY = focusedPosition.y + focusedSize.height / 2;
+
       const distFromFocused = Math.hypot(
-        position.x - focusedPosition.x,
-        position.y - focusedPosition.y
+        position.x - centerX,
+        position.y - centerY
       );
 
       // If mouse is very far from focused element, clear focus
@@ -111,7 +116,6 @@ class InputManager extends EventEmitter {
     // Call onFocus method if the element has one
     this.focusedElement.onFocus?.();
 
-    this.currentIndex = this.focusables.indexOf(this.focusedElement);
     this.cursor.setFocusedElement(this.focusedElement);
 
     this.currentIndex = this.focusables.indexOf(element);

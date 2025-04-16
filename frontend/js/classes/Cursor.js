@@ -41,17 +41,22 @@ class Cursor extends EventEmitter {
   initMouseEvents() {
     document.addEventListener("mouseleave", (e) => {
       this.hide();
-      this.emit("leave", { clientX: e.clientX, clientY: e.clientY });
+      this.emit("mouseleave", { clientX: e.clientX, clientY: e.clientY });
     });
 
     // Handle mouse entering the window
     document.addEventListener("mouseenter", (e) => {
       this.show();
-      this.emit("enter", { clientX: e.clientX, clientY: e.clientY });
+      this.emit("mouseenter", { clientX: e.clientX, clientY: e.clientY });
     });
 
     // Handle mouse movement
     document.addEventListener("mousemove", (e) => {
+      // Emit move event with position data
+      this.emit("mousemove", {
+        timestamp: Date.now(),
+      });
+
       this.targetPosition.set(e.x, e.y);
     });
   }
@@ -102,11 +107,11 @@ class Cursor extends EventEmitter {
 
   updatePosition() {
     if (
-      this.position.x !== this.targetPosition.x ||
-      this.position.y !== this.targetPosition.y
+      Math.round(this.position.x) !== this.targetPosition.x ||
+      Math.round(this.position.y) !== this.targetPosition.y
     ) {
       // Emit move event with position data
-      this.emit("move", {
+      this.emit("cursormove", {
         timestamp: Date.now(),
       });
 
