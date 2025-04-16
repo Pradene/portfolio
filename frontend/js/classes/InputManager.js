@@ -53,16 +53,16 @@ class InputManager extends EventEmitter {
   }
 
   handleInput(event) {
-    if (["ArrowRight", "ArrowLeft", "Tab"].includes(event.key)) {
-      this.setMode("keyboard");
-      this.navigate(event.key);
-    } else if (event.key === "Escape") {
+    if (event.key === "Escape") {
       // Allow escape key to clear focus
       this.clearFocus();
       this.cursor.setTargetPosition(
         this.actualMousePosition.x,
         this.actualMousePosition.y
       );
+    } else {
+      this.setMode("keyboard");
+      this.navigate(event.key);
     }
   }
 
@@ -211,14 +211,42 @@ class InputManager extends EventEmitter {
   navigate(key) {
     if (key === "ArrowRight" || key === "Tab") {
       this.currentIndex = (this.currentIndex + 1) % this.focusables.length;
+      this.setFocusedElement(this.focusables[this.currentIndex]);
     } else if (key === "ArrowLeft") {
       this.currentIndex =
         (this.currentIndex - 1 + this.focusables.length) %
         this.focusables.length;
-    }
+      this.setFocusedElement(this.focusables[this.currentIndex]);
+    } else {
+      const ids = [];
+      this.focusables.forEach((focusable) => {
+        let id = focusable.getIdentifier().toString();
+        ids.push(id);
+      });
 
-    // Set the focused element
-    this.setFocusedElement(this.focusables[this.currentIndex]);
+      const findIndexById = (targetId) => {
+        // Find the index where the identifier matches the target ID
+        const index = ids.findIndex(id => id === targetId);
+        
+        // If found, set as current element
+        if (index !== -1) {
+          this.currentIndex = index;
+          this.setFocusedElement(this.focusables[this.currentIndex]);
+          return 1;
+        }
+        
+        // If not found
+        return 0;
+      }
+      
+      // Example usage
+      const targetId = key;
+      const foundIndex = findIndexById(targetId);
+      
+      if (foundIndex !== 1) {
+        this.removeFocus();
+      }
+    }
   }
 }
 

@@ -1,20 +1,20 @@
 import Position from "./Position.js";
 import { lerp } from "../utils.js";
 
-let ID = 0;
 
 /**
  * Create a child div with an id to fzf
  * @param {HTMLElement} element 
- */
-const createIdentifier = (element) => {
+*/
+const createIdentifier = (element,id) => {
   const container = document.createElement("span");
   container.classList.add("fzf-id");
-  container.innerText = ID++;
+  container.innerText = id;
   
   element.appendChild(container);
 }
 
+let ID = 0;
 /**
  * A class to manage focus element
  */
@@ -36,7 +36,9 @@ class Focusable {
     /** @type {Position} */
     this.position = this.getPosition();
 
-    createIdentifier(this.element);
+    this.id = ID++
+
+    createIdentifier(this.element, this.id);
   }
 
   /**
@@ -48,6 +50,14 @@ class Focusable {
     const x = lerp(rect.right, rect.left, 0.5);
     const y = lerp(rect.top, rect.bottom, 0.5);
     return { x, y };
+  }
+
+  /**
+   * Get id
+   * @returns {number} id
+   */
+  getIdentifier() {
+    return this.id;
   }
 
   /**

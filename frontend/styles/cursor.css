@@ -9,7 +9,7 @@
     pointer-events: none;
     left: 0;
     top: 0;
-    background-color: rgb(255, 230, 25);
+    background-color: rgb(230, 100, 7);
     transform: translate(-50%, -50%); /* Center on mouse */
     z-index: 1001;
 }
