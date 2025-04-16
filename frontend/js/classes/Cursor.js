@@ -53,12 +53,6 @@ class Cursor extends EventEmitter {
     // Handle mouse movement
     document.addEventListener("mousemove", (e) => {
       this.targetPosition.set(e.x, e.y);
-      // Emit move event with position data
-      this.emit("move", {
-        clientX: e.clientX,
-        clientY: e.clientY,
-        timestamp: Date.now(),
-      });
     });
   }
 
@@ -107,9 +101,27 @@ class Cursor extends EventEmitter {
   }
 
   updatePosition() {
-    const easeFactor = 0.2;
-    this.position.x = lerp(this.position.x, this.targetPosition.x, easeFactor);
-    this.position.y = lerp(this.position.y, this.targetPosition.y, easeFactor);
+    if (
+      this.position.x !== this.targetPosition.x ||
+      this.position.y !== this.targetPosition.y
+    ) {
+      // Emit move event with position data
+      this.emit("move", {
+        timestamp: Date.now(),
+      });
+
+      const easeFactor = 0.2;
+      this.position.x = lerp(
+        this.position.x,
+        this.targetPosition.x,
+        easeFactor
+      );
+      this.position.y = lerp(
+        this.position.y,
+        this.targetPosition.y,
+        easeFactor
+      );
+    }
   }
 
   /**

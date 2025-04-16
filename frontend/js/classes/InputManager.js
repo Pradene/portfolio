@@ -41,7 +41,7 @@ class InputManager extends EventEmitter {
    * Sets up mouse and keyboard event listeners.
    */
   initListeners() {
-    this.cursor.on("move", (e) => this.handleMouse(e));
+    this.cursor.on("move", () => this.handleMouse());
 
     document.addEventListener("keydown", (e) => {
       this.handleInput(e);
@@ -59,7 +59,7 @@ class InputManager extends EventEmitter {
     }
   }
 
-  handleMouse(event) {
+  handleMouse() {
     this.setMode("mouse");
 
     const position = this.cursor.getPosition();
