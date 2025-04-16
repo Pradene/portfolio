@@ -8,12 +8,19 @@
     padding: 0;
 }
 
+:root {
+    --color-dark: #32302f;
+    --color-light: #ebdbb2;
+    --color-primary: #fe8019;
+}
+
 html {
     height: 100%;
     width: 100%;
 }
 
 body {
+    background-color: var(--color-dark);
     height: 100%;
     width: 100%;
     display: flex;
