@@ -2,7 +2,7 @@
     width: 0.5rem;
     height: 0.5rem;
     border-radius: 50%;
-    position: fixed; /* Changed to fixed for better tracking */
+    position: fixed;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -10,7 +10,9 @@
     left: 0;
     top: 0;
     background-color: rgb(230, 100, 7);
-    transform: translate(-50%, -50%); /* Center on mouse */
+    transform: translate(-50%, -50%) scale(0); /* Start hidden */
+    opacity: 0;
+    transition: transform 0.25s ease-out, opacity 0.25s ease-out;
     z-index: 1001;
 }
 
@@ -20,19 +22,31 @@
     width: 1rem;
     height: 1rem;
     border-radius: 50%;
-    background-color: rgba(0, 0, 255, 0.5); /* Fixed rgba format */
+    background-color: rgba(0, 0, 255, 0.5);
     opacity: 0;
-    transform: translate3d(0, 0, 0) scale(0); /* Initial scale (hidden) */
+    transform: translate3d(0, 0, 0) scale(0);
     transition: transform 0.25s ease-out, opacity 0.25s ease-out;
 }
 
-/* Animation classes */
-.show .inner-cursor {
+/* Show both cursor and inner cursor */
+#cursor.show {
     opacity: 1;
-    transform: scale(1);
+    transform: translate(-50%, -50%) scale(1);
 }
 
-.hide .inner-cursor {
-    opacity: 0;
-    transform: scale(0);
+#cursor.show .inner-cursor {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
 }
+
+/* Hide both cursor and inner cursor */
+#cursor.hide {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0);
+}
+
+#cursor.hide .inner-cursor {
+    opacity: 0;
+    transform: translate3d(0, 0, 0) scale(0);
+}
+  

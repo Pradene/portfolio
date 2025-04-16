@@ -80,18 +80,18 @@ class Cursor extends EventEmitter {
   }
 
   updateInnerCursor() {
-    const position = this.getPosition();
-
     if (this.focusedElement) {
       const elementPosition = this.focusedElement.getPosition();
       const elementSize = this.focusedElement.getSize();
-      const x = elementPosition.x + elementSize.width / 2 - position.x;
-      const y = elementPosition.y + elementSize.height / 2 - position.y;
+      const x =
+        elementPosition.x + elementSize.width / 2 - this.targetPosition.x;
+      const y =
+        elementPosition.y + elementSize.height / 2 - this.targetPosition.y;
 
       this.element.children[0].style.transform = `translate3d(${x}px, ${y}px, 0) scale(0.75)`;
     } else {
-      const dx = this.targetPosition.x - position.x;
-      const dy = this.targetPosition.y - position.y;
+      const dx = this.targetPosition.x - this.position.x;
+      const dy = this.targetPosition.y - this.position.y;
 
       // Optionally scale the movement to exaggerate or dampen it
       const easeFactor = 0.8;

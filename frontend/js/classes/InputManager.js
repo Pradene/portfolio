@@ -66,10 +66,10 @@ class InputManager extends EventEmitter {
 
     // Check if we need to completely exit focus due to large movement
     if (this.focusedElement) {
-      const focusedPos = this.focusedElement.getPosition();
+      const focusedPosition = this.focusedElement.getPosition();
       const distFromFocused = Math.hypot(
-        position.x - focusedPos.x,
-        position.y - focusedPos.y
+        position.x - focusedPosition.x,
+        position.y - focusedPosition.y
       );
 
       // If mouse is very far from focused element, clear focus
@@ -111,6 +111,7 @@ class InputManager extends EventEmitter {
     // Call onFocus method if the element has one
     this.focusedElement.onFocus?.();
 
+    this.currentIndex = this.focusables.indexOf(this.focusedElement);
     this.cursor.setFocusedElement(this.focusedElement);
 
     this.currentIndex = this.focusables.indexOf(element);
@@ -207,13 +208,13 @@ class InputManager extends EventEmitter {
    */
   navigate(key) {
     if (key === "ArrowRight" || key === "Tab") {
-      this.currentIndex = (this.currentIndex + 1) % this.focusables.length;
-      this.setFocusedElement(this.focusables[this.currentIndex]);
+      const index = (this.currentIndex + 1) % this.focusables.length;
+      this.setFocusedElement(this.focusables[index]);
     } else if (key === "ArrowLeft") {
-      this.currentIndex =
+      const index =
         (this.currentIndex - 1 + this.focusables.length) %
         this.focusables.length;
-      this.setFocusedElement(this.focusables[this.currentIndex]);
+      this.setFocusedElement(this.focusables[index]);
     } else {
       const ids = [];
       this.focusables.forEach((focusable) => {
@@ -221,26 +222,12 @@ class InputManager extends EventEmitter {
         ids.push(id);
       });
 
-      const findIndexById = (targetId) => {
-        // Find the index where the identifier matches the target ID
-        const index = ids.findIndex((id) => id === targetId);
+      // Find the index where the identifier matches the target ID
+      const index = ids.findIndex((id) => id === key);
 
-        // If found, set as current element
-        if (index !== -1) {
-          this.currentIndex = index;
-          this.setFocusedElement(this.focusables[this.currentIndex]);
-          return 1;
-        }
-
-        // If not found
-        return 0;
-      };
-
-      const targetId = key;
-      const foundIndex = findIndexById(targetId);
-
-      if (foundIndex !== 1) {
-        this.clearFocus();
+      // If found, set as current element
+      if (index !== -1) {
+        this.setFocusedElement(this.focusables[index]);
       }
     }
   }
