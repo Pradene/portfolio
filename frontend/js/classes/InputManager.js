@@ -147,6 +147,9 @@ class InputManager extends EventEmitter {
   setMode(mode) {
     if (this.mode !== mode) {
       this.mode = mode;
+      this.emit("modechange", {
+        mode: this.mode,
+      });
       console.log("Switched to", mode, "mode");
     }
   }

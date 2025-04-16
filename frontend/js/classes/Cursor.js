@@ -107,8 +107,8 @@ class Cursor extends EventEmitter {
 
   updatePosition() {
     if (
-      Math.round(this.position.x) !== this.targetPosition.x ||
-      Math.round(this.position.y) !== this.targetPosition.y
+      this.position.x !== this.targetPosition.x ||
+      this.position.y !== this.targetPosition.y
     ) {
       // Emit move event with position data
       this.emit("cursormove", {

@@ -4,7 +4,7 @@
     height: 2rem;
     border-radius: 0.5rem;
     border: solid 1px var(--color-light);
-    overflow: visible; /* Allow children to overflow */
+    overflow: visible;
 }
 
 .focusable::after {
@@ -14,7 +14,7 @@
     right: 0;
     width: 0.75rem;
     height: 0.75rem;
-    background-color: var(--color-dark); /* Same as your background */
+    background-color: var(--color-dark);
     transform: translate(50%, 50%) rotate(45deg);
     z-index: 1;
 }
@@ -36,7 +36,7 @@
     justify-content: center;
     align-items: center;
     border-radius: 50%;
-    z-index: 10000; /* Very high z-index */
+    z-index: 10;
     pointer-events: none;
     -webkit-user-select: none; /* Safari */
     -ms-user-select: none; /* IE 10 and IE 11 */
