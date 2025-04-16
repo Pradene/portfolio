@@ -15,7 +15,7 @@ class Position {
   }
 
   /**
-   * Sets the target position for the element to smoothly move towards.
+   * Sets the position.
    * @param {number} x - Target x (left) position.
    * @param {number} y - Target y (top) position.
    */
@@ -25,7 +25,7 @@ class Position {
   }
 
   /**
-   * Gets the current position of the element.
+   * Gets the current position.
    * @returns {{ x: number, y: number }} Current position.
    */
   get() {

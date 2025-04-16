@@ -7,7 +7,7 @@ import Focusable from "./Focusable.js";
  */
 class InputManager extends EventEmitter {
   /**
-   * @param {Object} cursor - A custom cursor instance with setTargetPosition(), getPosition(), and runAnimation().
+   * @param {Object} cursor - A custom cursor instance
    * @param {Array<Focusable>} focusables - List of focusable element instances.
    */
   constructor(cursor, focusables) {
@@ -24,9 +24,6 @@ class InputManager extends EventEmitter {
 
     /** @type {number} */
     this.currentIndex = 0;
-
-    /** @type {{x: number, y: number}} */
-    this.actualMousePosition = { x: 0, y: 0 };
 
     /** @type {Focusable|null} */
     this.focusedElement = null;
@@ -56,10 +53,6 @@ class InputManager extends EventEmitter {
     if (event.key === "Escape") {
       // Allow escape key to clear focus
       this.clearFocus();
-      this.cursor.setTargetPosition(
-        this.actualMousePosition.x,
-        this.actualMousePosition.y
-      );
     } else {
       this.setMode("keyboard");
       this.navigate(event.key);
@@ -69,27 +62,24 @@ class InputManager extends EventEmitter {
   handleMouse(event) {
     this.setMode("mouse");
 
-    // Always track the actual mouse position
-    this.actualMousePosition = { x: event.clientX, y: event.clientY };
+    const position = this.cursor.getPosition();
 
     // Check if we need to completely exit focus due to large movement
     if (this.focusedElement) {
       const focusedPos = this.focusedElement.getPosition();
       const distFromFocused = Math.hypot(
-        event.clientX - focusedPos.x,
-        event.clientY - focusedPos.y
+        position.x - focusedPos.x,
+        position.y - focusedPos.y
       );
 
       // If mouse is very far from focused element, clear focus
       if (distFromFocused > this.UNSNAP_DISTANCE) {
         this.clearFocus();
-        this.cursor.setTargetPosition(event.clientX, event.clientY);
         return;
       }
     }
 
-    const nearest = this.getNearestFocusable(event.clientX, event.clientY);
-    this.cursor.setTargetPosition(event.clientX, event.clientY);
+    const nearest = this.getNearestFocusable(position.x, position.y);
 
     if (nearest) {
       const dist = this.distanceTo(nearest);
@@ -102,7 +92,7 @@ class InputManager extends EventEmitter {
         if (newFocusedElement && newFocusedElement !== this.focusedElement) {
           this.setFocusedElement(newFocusedElement);
         }
-      } 
+      }
     }
   }
 
@@ -124,6 +114,13 @@ class InputManager extends EventEmitter {
     this.cursor.setFocusedElement(this.focusedElement);
 
     this.currentIndex = this.focusables.indexOf(element);
+  }
+
+  /**
+   * @returns {HTMLElement | null}
+   */
+  getFocusedElement() {
+    return this.focusedElement;
   }
 
   /**
@@ -226,25 +223,24 @@ class InputManager extends EventEmitter {
 
       const findIndexById = (targetId) => {
         // Find the index where the identifier matches the target ID
-        const index = ids.findIndex(id => id === targetId);
-        
+        const index = ids.findIndex((id) => id === targetId);
+
         // If found, set as current element
         if (index !== -1) {
           this.currentIndex = index;
           this.setFocusedElement(this.focusables[this.currentIndex]);
           return 1;
         }
-        
+
         // If not found
         return 0;
-      }
-      
-      // Example usage
+      };
+
       const targetId = key;
       const foundIndex = findIndexById(targetId);
-      
+
       if (foundIndex !== 1) {
-        this.removeFocus();
+        this.clearFocus();
       }
     }
   }

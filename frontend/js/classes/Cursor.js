@@ -52,6 +52,7 @@ class Cursor extends EventEmitter {
 
     // Handle mouse movement
     document.addEventListener("mousemove", (e) => {
+      this.targetPosition.set(e.x, e.y);
       // Emit move event with position data
       this.emit("move", {
         clientX: e.clientX,
@@ -78,20 +79,37 @@ class Cursor extends EventEmitter {
     this.position.set(x, y);
   }
 
-  /**
-   * Moves the target cursor element to the specified position.
-   * @param {number} x - The x (left) coordinate in pixels.
-   * @param {number} y - The y (top) coordinate in pixels.
-   */
-  setTargetPosition(x, y) {
-    this.targetPosition.set(x, y);
+  updateInnerCursor() {
+    const position = this.getPosition();
+
+    if (this.focusedElement) {
+      const elementPosition = this.focusedElement.getPosition();
+      const elementSize = this.focusedElement.getSize();
+      const x = elementPosition.x + elementSize.width / 2 - position.x;
+      const y = elementPosition.y + elementSize.height / 2 - position.y;
+
+      this.element.children[0].style.transform = `translate3d(${x}px, ${y}px, 0) scale(0.75)`;
+    } else {
+      const dx = this.targetPosition.x - position.x;
+      const dy = this.targetPosition.y - position.y;
+
+      // Optionally scale the movement to exaggerate or dampen it
+      const easeFactor = 0.8;
+
+      const offsetX = -dx * easeFactor;
+      const offsetY = -dy * easeFactor;
+
+      // You can scale down the inner cursor for a visual "depth" effect
+      const scale = this.focusedElement ? 0.75 : 1;
+
+      this.element.children[0].style.transform = `translate3d(${offsetX}px, ${offsetY}px, 0) scale(${scale})`;
+    }
   }
 
   updatePosition() {
     const easeFactor = 0.2;
     this.position.x = lerp(this.position.x, this.targetPosition.x, easeFactor);
     this.position.y = lerp(this.position.y, this.targetPosition.y, easeFactor);
-    return { ...this.position }; // Return current position after update
   }
 
   /**
@@ -116,22 +134,12 @@ class Cursor extends EventEmitter {
    * Move cursor using lerp
    */
   update() {
-    const position = this.updatePosition();
+    this.updatePosition();
+    this.updateInnerCursor();
+
+    const position = this.getPosition();
     this.element.style.left = `${position.x}px`;
     this.element.style.top = `${position.y}px`;
-
-    if (this.focusedElement) {
-      const currentPosition = this.getPosition();
-      const elementPosition = this.focusedElement.getPosition();
-      const elementSize = this.focusedElement.getSize();
-
-      const x = elementPosition.x + elementSize.width / 2 - currentPosition.x;
-      const y = elementPosition.y + elementSize.height / 2 - currentPosition.y;
-
-      this.element.children[0].style.transform = `translate3d(${x}px, ${y}px, 0) scale(0.75)`;
-    } else {
-      this.element.children[0].style.transform = `translate3d(0, 0, 0) scale(1)`;
-    }
   }
 
   /**
