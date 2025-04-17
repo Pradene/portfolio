@@ -28,12 +28,6 @@ class InputManager extends EventEmitter {
     /** @type {Focusable|null} */
     this.focusedElement = null;
 
-    /** @type {number} */
-    this.SNAP_DISTANCE = 24;
-
-    /** @type {number} */
-    this.UNSNAP_DISTANCE = 36;
-
     this.initListeners();
   }
 
@@ -50,48 +44,55 @@ class InputManager extends EventEmitter {
     });
   }
 
+  /**
+   * Handle keyboard event
+   * @param {KeyboardEvent} event
+   */
   handleInput(event) {
+    // console.log(event.key);
     if (event.key === "Escape") {
       // Allow escape key to clear focus
       this.clearFocus();
+    } else if (event.key == "Enter") {
+      if (this.focusedElement) {
+        console.log(this.focusedElement);
+      }
     } else {
       this.setMode("keyboard");
       this.navigate(event.key);
     }
   }
 
+  /**
+   * Checks if a point is inside a focusable element's bounding box
+   * @param {number} x - Cursor X position
+   * @param {number} y - Cursor Y position
+   * @param {Focusable} focusable - Focusable element to check
+   * @returns {boolean} - True if point is inside the element's bounds
+   */
+  isPointInElement(x, y, focusable) {
+    const rect = focusable.element.getBoundingClientRect();
+    return (
+      x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom
+    );
+  }
+
+  /**
+   * Handle cursor movement
+   */
   handleCursorMove() {
     const position = this.cursor.getPosition();
+    const element = this.getFocusableAtPoint(position.x, position.y);
 
-    // Check if we need to completely exit focus due to large movement
-    if (this.focusedElement) {
-      const focusedPosition = this.focusedElement.getPosition();
-
-      const distFromFocused = Math.hypot(
-        position.x - focusedPosition.x,
-        position.y - focusedPosition.y
-      );
-
-      // If mouse is very far from focused element, clear focus
-      if (distFromFocused > this.UNSNAP_DISTANCE) {
-        this.clearFocus();
-        return;
-      }
+    // If cursor is inside an element and it's different from current focus
+    if (element && element !== this.focusedElement) {
+      this.setFocusedElement(element);
     }
-
-    const nearest = this.getNearestFocusable(position.x, position.y);
-
-    if (nearest) {
-      const dist = this.distanceTo(nearest);
-
-      if (dist < this.SNAP_DISTANCE) {
-        // Get the focused element
-        const newFocusedElement = this.getFocusableAtPosition(nearest);
-
-        // If we found a new focusable, set it as focused
-        if (newFocusedElement && newFocusedElement !== this.focusedElement) {
-          this.setFocusedElement(newFocusedElement);
-        }
+    // If no element found and we have focus, check if we should clear it
+    else if (!element && this.focusedElement) {
+      // Clear focus only if cursor is outside the focused element
+      if (!this.isPointInElement(position.x, position.y, this.focusedElement)) {
+        this.clearFocus();
       }
     }
   }
@@ -113,7 +114,7 @@ class InputManager extends EventEmitter {
 
     this.cursor.setFocusedElement(this.focusedElement);
 
-    this.currentIndex = this.focusables.indexOf(element);
+    this.currentIndex = this.focusables.indexOf(this.focusedElement);
   }
 
   /**
@@ -150,58 +151,19 @@ class InputManager extends EventEmitter {
   }
 
   /**
-   * Finds the nearest focusable element to the given coordinates.
+   * Finds the focusable element at the given coordinates, or null if none.
    * @param {number} x
    * @param {number} y
-   * @returns {{x: number, y: number} | null}
+   * @returns {Focusable | null}
    */
-  getNearestFocusable(x, y) {
-    let nearest = null;
-    let minDist = Infinity;
-
-    this.focusables.forEach((f) => {
-      let center = f.getPosition();
-
-      const dx = x - center.x;
-      const dy = y - center.y;
-      const dist = Math.hypot(dx, dy);
-
-      if (dist < minDist) {
-        minDist = dist;
-        nearest = { x: center.x, y: center.y };
-      }
-    });
-
-    return nearest;
-  }
-
-  /**
-   * Finds which focusable is at the given position
-   * @param {{x: number, y: number}} position
-   * @returns {Focusable|null}
-   */
-  getFocusableAtPosition(position) {
-    for (let i = 0; i < this.focusables.length; i++) {
-      const focusablePos = this.focusables[i].getPosition();
-      // Using a small threshold for position matching
-      if (
-        Math.abs(focusablePos.x - position.x) < 2 &&
-        Math.abs(focusablePos.y - position.y) < 2
-      ) {
-        return this.focusables[i];
+  getFocusableAtPoint(x, y) {
+    for (const focusable of this.focusables) {
+      if (this.isPointInElement(x, y, focusable)) {
+        return focusable;
       }
     }
-    return null;
-  }
 
-  /**
-   * Computes the distance from the cursor to a given position.
-   * @param {{x: number, y: number}} pos
-   * @returns {number}
-   */
-  distanceTo(pos) {
-    const current = this.cursor.getPosition();
-    return Math.hypot(pos.x - current.x, pos.y - current.y);
+    return null;
   }
 
   /**

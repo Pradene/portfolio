@@ -46,6 +46,25 @@ class Cursor extends EventEmitter {
     this.initMouseEvents();
   }
 
+  /**
+   * Get the position of the cursor
+   * @returns {number, number} Position (x, y)
+   */
+  getPosition() {
+    return { ...this.position.get() };
+  }
+
+  /**
+   * Move cursor using lerp
+   */
+  update() {
+    this.updateCursor();
+    this.updateInnerCursor();
+  }
+
+  /**
+   * @private
+   */
   initMouseEvents() {
     document.addEventListener("mouseleave", (e) => {
       this.hide();
@@ -71,24 +90,8 @@ class Cursor extends EventEmitter {
   }
 
   /**
-   * Get the position of the cursor
-   * @returns {number, number} Position (x, y)
-   */
-  getPosition() {
-    return { ...this.position.get() };
-  }
-
-  /**
-   * Moves the cursor element to the specified position.
-   * @param {number} x - The x (left) coordinate in pixels.
-   * @param {number} y - The y (top) coordinate in pixels.
-   */
-  setPosition(x, y) {
-    this.position.set(x, y);
-  }
-
-  /**
    * Updates the target position for the inner cursor based on current context
+   * @private
    */
   updateInnerTargetPosition() {
     if (this.focusedElement) {
@@ -112,6 +115,9 @@ class Cursor extends EventEmitter {
     }
   }
 
+  /**
+   * @private
+   */
   updateInnerCursor() {
     // Update inner position with smooth lerp
     const innerEaseFactor = 0.2; // Adjust this value for inner cursor smoothness
@@ -133,7 +139,10 @@ class Cursor extends EventEmitter {
     this.element.children[0].style.transform = `translate3d(${this.innerPosition.x}px, ${this.innerPosition.y}px, 0) scale(${scale})`;
   }
 
-  updatePosition() {
+  /**
+   * @private
+   */
+  updateCursor() {
     if (
       this.position.x !== this.targetPosition.x ||
       this.position.y !== this.targetPosition.y
@@ -150,6 +159,8 @@ class Cursor extends EventEmitter {
         easeFactor
       );
 
+      this.element.style.transform = `translate3d(calc(${this.position.x}px - 50%), calc(${this.position.y}px - 50%), 0)`;
+
       this.updateInnerTargetPosition();
 
       // Emit move event with position data
@@ -159,20 +170,8 @@ class Cursor extends EventEmitter {
     }
   }
 
-  updateCursor() {
-    this.element.style.transform = `translate3d(calc(${this.position.x}px - 50%), calc(${this.position.y}px - 50%), 0)`;
-  }
-
   /**
-   * Move cursor using lerp
-   */
-  update() {
-    this.updatePosition();
-    this.updateCursor();
-    this.updateInnerCursor();
-  }
-
-  /**
+   * Set the focused element
    * @param {Focusable} element
    */
   setFocusedElement(element) {
@@ -180,6 +179,9 @@ class Cursor extends EventEmitter {
     this.updateInnerTargetPosition(); // Update inner target when focus changes
   }
 
+  /**
+   * Clear the focused element
+   */
   clearFocusedElement() {
     this.focusedElement = null;
     this.updateInnerTargetPosition(); // U65554444pdate inner target when focus changes
@@ -187,6 +189,7 @@ class Cursor extends EventEmitter {
 
   /**
    * Shows the cursor element.
+   * @private
    */
   show() {
     this.element.classList.remove("hide");
@@ -196,6 +199,7 @@ class Cursor extends EventEmitter {
 
   /**
    * Hides the cursor element.
+   * @private
    */
   hide() {
     this.element.classList.remove("show");

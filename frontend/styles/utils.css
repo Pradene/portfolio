@@ -1,9 +1,19 @@
-.focusable {
-    position: relative;
+.box {
     width: 2rem;
     height: 2rem;
     border-radius: 0.5rem;
     border: solid 1px var(--color-dark-light);
+}
+
+.window {
+    width: 20rem;
+    height: 20rem;
+    border-radius: 0.5rem;
+    border: solid 1px var(--color-dark-light);
+}
+
+.focusable {
+    position: relative;
     overflow: visible;
     transition: border 0.25s ease-out;
 }
@@ -39,9 +49,9 @@
     border-radius: 50%;
     z-index: 10;
     pointer-events: none;
-    -webkit-user-select: none; /* Safari */
-    -ms-user-select: none; /* IE 10 and IE 11 */
     user-select: none;
+    -ms-user-select: none; /* IE 10 and IE 11 */
+    -webkit-user-select: none; /* Safari */
 }
 
 #loader {
