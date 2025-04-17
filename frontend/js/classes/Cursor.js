@@ -162,7 +162,7 @@ class Cursor extends EventEmitter {
    * Hides the cursor element.
    */
   hide() {
-    this.element.classList.remove("hide");
+    this.element.classList.remove("show");
     void this.element.offsetWidth;
     this.element.classList.add("hide");
   }
