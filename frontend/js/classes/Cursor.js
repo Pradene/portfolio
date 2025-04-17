@@ -92,13 +92,11 @@ class Cursor extends EventEmitter {
       const dx = this.targetPosition.x - this.position.x;
       const dy = this.targetPosition.y - this.position.y;
 
-      // Optionally scale the movement to exaggerate or dampen it
-      const easeFactor = 0.8;
+      const dampFactor = 0.8;
 
-      const offsetX = -dx * easeFactor;
-      const offsetY = -dy * easeFactor;
+      const offsetX = -dx * dampFactor;
+      const offsetY = -dy * dampFactor;
 
-      // You can scale down the inner cursor for a visual "depth" effect
       const scale = this.focusedElement ? 0.75 : 1;
 
       this.element.children[0].style.transform = `translate3d(${offsetX}px, ${offsetY}px, 0) scale(${scale})`;
@@ -130,24 +128,6 @@ class Cursor extends EventEmitter {
   }
 
   /**
-   * Shows the cursor element.
-   */
-  show() {
-    this.element.classList.remove("hide", "show");
-    void this.element.offsetWidth;
-    this.element.classList.add("show");
-  }
-
-  /**
-   * Hides the cursor element.
-   */
-  hide() {
-    this.element.classList.remove("show", "hide");
-    void this.element.offsetWidth;
-    this.element.classList.add("hide");
-  }
-
-  /**
    * Move cursor using lerp
    */
   update() {
@@ -168,6 +148,24 @@ class Cursor extends EventEmitter {
 
   clearFocusedElement() {
     this.focusedElement = null;
+  }
+
+  /**
+   * Shows the cursor element.
+   */
+  show() {
+    this.element.classList.remove("hide", "show");
+    void this.element.offsetWidth;
+    this.element.classList.add("show");
+  }
+
+  /**
+   * Hides the cursor element.
+   */
+  hide() {
+    this.element.classList.remove("show", "hide");
+    void this.element.offsetWidth;
+    this.element.classList.add("hide");
   }
 }
 

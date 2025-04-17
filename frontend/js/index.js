@@ -1,6 +1,7 @@
 import Cursor from "./classes/Cursor.js";
 import Focusable from "./classes/Focusable.js";
 import InputManager from "./classes/InputManager.js";
+import Loader from "./classes/Loader.js";
 
 document.addEventListener("DOMContentLoaded", () => {
   const cursorElement = document.getElementById("cursor");
@@ -13,9 +14,12 @@ document.addEventListener("DOMContentLoaded", () => {
     focusableInstances.push(instance);
   });
 
-  const inputManager = new InputManager(cursor, focusableInstances);
+  const loaderElement = document.getElementById("loader");
+  const loader = new Loader(loaderElement);
 
-  window.addEventListener("resize", (event) => {
+  void new InputManager(cursor, focusableInstances);
+
+  window.addEventListener("resize", () => {
     // Update all focusable positions
     focusableInstances.forEach((focusable) => {
       focusable.update();

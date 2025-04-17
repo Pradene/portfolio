@@ -9,6 +9,7 @@
 
 :root {
     --color-dark: #32302f;
+    --color-dark-light: #504945;
     --color-light: #ebdbb2;
     --color-primary: #fe8019;
 }
@@ -23,6 +24,7 @@ body {
     height: 100%;
     width: 100%;
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: space-around;
     cursor: none;
