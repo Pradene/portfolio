@@ -52,6 +52,7 @@ class Cursor extends EventEmitter {
 
     // Handle mouse movement
     document.addEventListener("mousemove", (e) => {
+      this.show();
       // Emit move event with position data
       this.emit("mousemove", {
         timestamp: Date.now(),
@@ -152,7 +153,7 @@ class Cursor extends EventEmitter {
    * Shows the cursor element.
    */
   show() {
-    this.element.classList.remove("hide", "show");
+    this.element.classList.remove("hide");
     void this.element.offsetWidth;
     this.element.classList.add("show");
   }
@@ -161,7 +162,7 @@ class Cursor extends EventEmitter {
    * Hides the cursor element.
    */
   hide() {
-    this.element.classList.remove("show", "hide");
+    this.element.classList.remove("hide");
     void this.element.offsetWidth;
     this.element.classList.add("hide");
   }
