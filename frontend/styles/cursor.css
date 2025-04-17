@@ -2,7 +2,7 @@
     width: 0.5rem;
     height: 0.5rem;
     border-radius: 50%;
-    position: fixed;
+    position: absolute;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -12,7 +12,7 @@
     background-color: var(--color-primary);
     transform: translate(-50%, -50%) scale(0); /* Start hidden */
     opacity: 0;
-    transition: transform 0.25s ease-out, opacity 0.25s ease-out;
+    transition: opacity 0.5s ease-out;
     z-index: 1001;
 }
 
@@ -25,7 +25,7 @@
     background-color: var(--color-primary);
     opacity: 0;
     transform: translate3d(0, 0, 0) scale(0);
-    transition: transform 0.25s ease-out, opacity 0.25s ease-out;
+    transition: opacity 0.5s ease-out;
 }
 
 /* Show both cursor and inner cursor */

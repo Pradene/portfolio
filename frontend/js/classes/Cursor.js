@@ -30,6 +30,14 @@ class Cursor extends EventEmitter {
     /** @type {Position} */
     this.targetPosition = new Position(0, 0);
 
+    /**@private */
+    /** @type {Position} */
+    this.innerPosition = new Position(0, 0);
+
+    /**@private */
+    /** @type {Position} */
+    this.innerTargetPosition = new Position(0, 0);
+
     /** @private */
     /** @type {Focusable|null} */
     this.focusedElement = null;
@@ -79,27 +87,50 @@ class Cursor extends EventEmitter {
     this.position.set(x, y);
   }
 
-  updateInnerCursor() {
+  /**
+   * Updates the target position for the inner cursor based on current context
+   */
+  updateInnerTargetPosition() {
     if (this.focusedElement) {
+      // When focused on an element, calculate target position relative to the focused element
       const elementPosition = this.focusedElement.getPosition();
       const elementSize = this.focusedElement.getSize();
-      const x =
-        elementPosition.x + elementSize.width / 2 - this.targetPosition.x;
-      const y =
-        elementPosition.y + elementSize.height / 2 - this.targetPosition.y;
+      const x = elementPosition.x + elementSize.width / 2 - this.position.x;
+      const y = elementPosition.y + elementSize.height / 2 - this.position.y;
 
-      this.element.children[0].style.transform = `translate3d(${x}px, ${y}px, 0) scale(0.75)`;
+      this.innerTargetPosition.set(x, y);
     } else {
+      // When not focused, calculate the dampened inverse movement
       const dx = this.targetPosition.x - this.position.x;
       const dy = this.targetPosition.y - this.position.y;
 
       const dampFactor = 0.8;
-
       const offsetX = -dx * dampFactor;
       const offsetY = -dy * dampFactor;
 
-      this.element.children[0].style.transform = `translate3d(${offsetX}px, ${offsetY}px, 0) scale(1)`;
+      this.innerTargetPosition.set(offsetX, offsetY);
     }
+  }
+
+  updateInnerCursor() {
+    // Update inner position with smooth lerp
+    const innerEaseFactor = 0.2; // Adjust this value for inner cursor smoothness
+    this.innerPosition.x = lerp(
+      this.innerPosition.x,
+      this.innerTargetPosition.x,
+      innerEaseFactor
+    );
+    this.innerPosition.y = lerp(
+      this.innerPosition.y,
+      this.innerTargetPosition.y,
+      innerEaseFactor
+    );
+
+    // Calculate scale based on whether we're focused or not
+    const scale = this.focusedElement ? 0.75 : 1;
+
+    // Apply the transform
+    this.element.children[0].style.transform = `translate3d(${this.innerPosition.x}px, ${this.innerPosition.y}px, 0) scale(${scale})`;
   }
 
   updatePosition() {
@@ -107,11 +138,6 @@ class Cursor extends EventEmitter {
       this.position.x !== this.targetPosition.x ||
       this.position.y !== this.targetPosition.y
     ) {
-      // Emit move event with position data
-      this.emit("cursormove", {
-        timestamp: Date.now(),
-      });
-
       const easeFactor = 0.2;
       this.position.x = lerp(
         this.position.x,
@@ -123,7 +149,18 @@ class Cursor extends EventEmitter {
         this.targetPosition.y,
         easeFactor
       );
+
+      this.updateInnerTargetPosition();
+
+      // Emit move event with position data
+      this.emit("cursormove", {
+        timestamp: Date.now(),
+      });
     }
+  }
+
+  updateCursor() {
+    this.element.style.transform = `translate3d(calc(${this.position.x}px - 50%), calc(${this.position.y}px - 50%), 0)`;
   }
 
   /**
@@ -131,11 +168,8 @@ class Cursor extends EventEmitter {
    */
   update() {
     this.updatePosition();
+    this.updateCursor();
     this.updateInnerCursor();
-
-    const position = this.getPosition();
-    this.element.style.left = `${position.x}px`;
-    this.element.style.top = `${position.y}px`;
   }
 
   /**
@@ -143,10 +177,12 @@ class Cursor extends EventEmitter {
    */
   setFocusedElement(element) {
     this.focusedElement = element;
+    this.updateInnerTargetPosition(); // Update inner target when focus changes
   }
 
   clearFocusedElement() {
     this.focusedElement = null;
+    this.updateInnerTargetPosition(); // U65554444pdate inner target when focus changes
   }
 
   /**
