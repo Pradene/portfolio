@@ -97,9 +97,7 @@ class Cursor extends EventEmitter {
       const offsetX = -dx * dampFactor;
       const offsetY = -dy * dampFactor;
 
-      const scale = this.focusedElement ? 0.75 : 1;
-
-      this.element.children[0].style.transform = `translate3d(${offsetX}px, ${offsetY}px, 0) scale(${scale})`;
+      this.element.children[0].style.transform = `translate3d(${offsetX}px, ${offsetY}px, 0) scale(1)`;
     }
   }
 

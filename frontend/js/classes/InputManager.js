@@ -66,15 +66,10 @@ class InputManager extends EventEmitter {
     // Check if we need to completely exit focus due to large movement
     if (this.focusedElement) {
       const focusedPosition = this.focusedElement.getPosition();
-      const focusedSize = this.focusedElement.getSize();
-
-      // Calculate the center of the focused element
-      const centerX = focusedPosition.x + focusedSize.width / 2;
-      const centerY = focusedPosition.y + focusedSize.height / 2;
 
       const distFromFocused = Math.hypot(
-        position.x - centerX,
-        position.y - centerY
+        position.x - focusedPosition.x,
+        position.y - focusedPosition.y
       );
 
       // If mouse is very far from focused element, clear focus
